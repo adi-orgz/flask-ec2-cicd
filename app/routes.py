@@ -1,12 +1,11 @@
-from flask import render_template
-from app import app
+from flask import Blueprint, render_template
 
+bp = Blueprint('main', __name__)
 
-@app.route("/")
+@bp.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
-
-@app.route("/api/hello")
+@bp.route('/api/hello')
 def hello():
-    return {"message": "Hello from Flask!"}
+    return {'message': 'Hello from Flask!'}

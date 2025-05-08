@@ -1,6 +1,14 @@
 from flask import Flask
 
-app = Flask(__name__, template_folder='templates')
 
-# Import routes after app creation to avoid circular imports
-from app import routes
+def create_app():
+    """Application factory function"""
+    app = Flask(__name__, template_folder='templates')
+    
+    # Initialize extensions here (if any)
+    
+    # Register blueprints or routes
+    from app import routes
+    app.register_blueprint(routes.bp)
+    
+    return app
