@@ -3,7 +3,7 @@ name: Flask CI/CD to EC2
 on: [push]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
         echo "✅ $PASSED_TESTS passed | ❌ $FAILED_TESTS failed | 📊 $TOTAL_TESTS total" >> $GITHUB_STEP_SUMMARY
 
   # deploy:
-  #   needs: test
+  #   needs: build
   #   runs-on: ubuntu-latest
   #   steps:
   #   - uses: actions/checkout@v4
