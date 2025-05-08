@@ -28,18 +28,28 @@ jobs:
 
     - name: Test Summary
       run: |
-        echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-        echo "| Test | Status |" >> $GITHUB_STEP_SUMMARY
-        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "### 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "| Test Case | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
         
-        # Parse the test results
-        PASSED=$(grep -o '<testcase' test-results.xml | wc -l)
-        FAILED=$(grep -o '<failure' test-results.xml | wc -l)
+        # Parse each test case from the XML
+        while read -r testcase; do
+          name=$(echo "$testcase" | sed -n 's/.*name="\([^"]*\)".*/\1/p')
+          if [[ $testcase == *"<failure"* ]]; then
+            echo "| $name | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| $name | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          fi
+        done < <(grep -E '<testcase|</testcase>' test-results.xml | tr -d '\n' | sed 's/<testcase/\n<testcase/g')
         
-        echo "✅ **$PASSED passed**" >> $GITHUB_STEP_SUMMARY
-        echo "❌ **$FAILED failed**" >> $GITHUB_STEP_SUMMARY
+        # Add summary counts
+        TOTAL_TESTS=$(grep -o '<testcase' test-results.xml | wc -l)
+        FAILED_TESTS=$(grep -o '<failure' test-results.xml | wc -l)
+        PASSED_TESTS=$((TOTAL_TESTS - FAILED_TESTS))
+        
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "View detailed test report in artifacts." >> $GITHUB_STEP_SUMMARY
+        echo "**Summary:**" >> $GITHUB_STEP_SUMMARY
+        echo "✅ $PASSED_TESTS passed | ❌ $FAILED_TESTS failed | 📊 $TOTAL_TESTS total" >> $GITHUB_STEP_SUMMARY
 
   deploy:
     needs: test

@@ -20,3 +20,9 @@ def test_api_hello(client):
     response = client.get('/api/hello')
     assert response.status_code == 200
     assert response.json == {"message": "Hello from Flask!"}  # Updated assertion
+
+def test_api_hello2(client):
+    """Test API endpoint returns 200 and correct data"""
+    response = client.get('/api/hello')
+    assert response.status_code == 200
+    assert response.json == {"message": "Hello from Mayur Gf!"}  # Updated assertion
