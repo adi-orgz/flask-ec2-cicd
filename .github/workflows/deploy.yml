@@ -25,12 +25,21 @@ jobs:
         pytest --cov=./ --cov-report=xml --junitxml=test-results.xml
     - name: Upload coverage
       uses: codecov/codecov-action@v3
+
     - name: Test Summary
       run: |
-        TOTAL_TESTS=$(grep -o 'tests="[0-9]*"' test-results.xml | grep -o '[0-9]*')
-        PASSED_TESTS=$(grep -o 'failures="0"[^>]*errors="0"' test-results.xml | wc -l)
         echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-        echo "✅ $PASSED_TESTS/$TOTAL_TESTS tests passed" >> $GITHUB_STEP_SUMMARY
+        echo "| Test | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        
+        # Parse the test results
+        PASSED=$(grep -o '<testcase' test-results.xml | wc -l)
+        FAILED=$(grep -o '<failure' test-results.xml | wc -l)
+        
+        echo "✅ **$PASSED passed**" >> $GITHUB_STEP_SUMMARY
+        echo "❌ **$FAILED failed**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "View detailed test report in artifacts." >> $GITHUB_STEP_SUMMARY
 
   deploy:
     needs: test
