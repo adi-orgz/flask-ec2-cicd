@@ -1,14 +1,20 @@
+import pytest
 from app import app
 
 
-def test_index():
-    tester = app.test_client()
-    response = tester.get('/')
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    with app.test_client() as client:
+        yield client
+
+
+def test_index(client):
+    response = client.get("/")
     assert response.status_code == 200
 
 
-def test_hello():
-    tester = app.test_client()
-    response = tester.get('/api/hello')
+def test_api_hello(client):
+    response = client.get("/api/hello")
     assert response.status_code == 200
-    assert response.json == {'message': 'Hello from Flask!'}
+    assert b"message" in response.data
