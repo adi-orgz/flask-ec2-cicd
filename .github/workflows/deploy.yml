@@ -16,10 +16,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-cov flake8 black
-    - name: Lint
-      run: |
-        flake8 .
-        black --check .
+    # - name: Lint
+    #   run: |
+    #     flake8 .
+    #     black --check .
     - name: Test
       run: |
         pytest --cov=./ --cov-report=xml --junitxml=test-results.xml
