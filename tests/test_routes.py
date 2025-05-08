@@ -10,11 +10,14 @@ def client():
 
 
 def test_index(client):
-    response = client.get("/")
+    """Test the home page returns 200"""
+    response = client.get('/')
     assert response.status_code == 200
+    assert b"Flask App Deployed" in response.data  # Verify content
 
 
 def test_api_hello(client):
-    response = client.get("/api/hello")
+    """Test API endpoint returns 200 and correct data"""
+    response = client.get('/api/hello')
     assert response.status_code == 200
-    assert b"message" in response.data
+    assert response.json == {"message": "Hello from Flask!"}
